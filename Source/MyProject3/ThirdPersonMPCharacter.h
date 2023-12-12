@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "ThirdPersonMPProjectile.h"
 #include "ThirdPersonMPCharacter.generated.h"
+
 
 UCLASS()
 class MYPROJECT3_API AThirdPersonMPCharacter : public ACharacter
@@ -37,6 +39,26 @@ protected:
 	UFUNCTION()
 	void OnRep_CurrentHealth();
 	void OnHealthUpdate();
+
+	UPROPERTY(EditDefaultsOnly,Category="GamePlay|Projectile")
+	TSubclassOf<class AThirdPersonMPProjectile>ProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly,Category="Gameplay")
+	float FireRate;
+	
+	bool bIsFireingWeapons;
+
+	UFUNCTION(BlueprintCallable,Category="Gameplay")
+	void StartFire();
+
+	UFUNCTION(BlueprintCallable,Category="Gameplay")
+	void StopFire();
+
+	UFUNCTION(Server,Reliable) 
+	void HandleFire(); 
+	void HandleFire_Implementation();
+
+	FTimerHandle FiringTimer;
 
 public:
 	UFUNCTION(BlueprintPure,Category="Health")

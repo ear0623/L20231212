@@ -15,6 +15,10 @@ AThirdPersonMPCharacter::AThirdPersonMPCharacter()
 	MaxHealth = 100.0f;
 	CurrentHealth = MaxHealth;
 
+	ProjectileClass = AThirdPersonMPProjectile::StaticClass();
+	FireRate = 0.25;
+	bIsFireingWeapons = false;
+
 }
 
 void AThirdPersonMPCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -77,11 +81,44 @@ void AThirdPersonMPCharacter::OnHealthUpdate()
 	*/
 }
 
+void AThirdPersonMPCharacter::StartFire()
+{
+	if (!bIsFireingWeapons)
+	{
+		bIsFireingWeapons = true;
+		UWorld* World = GetWorld();
+		World->GetTimerManager().SetTimer(FiringTimer, this, &AThirdPersonMPCharacter::StopFire, FireRate, false);
+		HandleFire_Implementation();
+	}
+}
+
+void AThirdPersonMPCharacter::StopFire()
+{
+	bIsFireingWeapons = false;
+}
+
+void AThirdPersonMPCharacter::HandleFire()
+{
+	FVector SpawnLocation = GetActorLocation() + (GetActorRotation().Vector() * 100.0f) + (GetActorUpVector() * 50.0f);
+	FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Instigator = GetInstigator();
+	SpawnParameters.Owner = this;
+
+	AThirdPersonMPProjectile* SpawnedProjectile = GetWorld()->SpawnActor<AThirdPersonMPProjectile>(SpawnLocation, SpawnRotation, SpawnParameters);
+}
+
+void AThirdPersonMPCharacter::HandleFire_Implementation()
+{
+
+}
+
 void AThirdPersonMPCharacter::SetCurrentHealth(float HealthValue)
 {
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		CurrentHealth == FMath::Clamp(HealthValue, 0.0f, MaxHealth);
+		CurrentHealth = FMath::Clamp(HealthValue, 0.0f, MaxHealth);
 		OnHealthUpdate();
 	}
 }
