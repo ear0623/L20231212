@@ -88,7 +88,7 @@ void AThirdPersonMPCharacter::StartFire()
 		bIsFireingWeapons = true;
 		UWorld* World = GetWorld();
 		World->GetTimerManager().SetTimer(FiringTimer, this, &AThirdPersonMPCharacter::StopFire, FireRate, false);
-		HandleFire_Implementation();
+		HandleFire();
 	}
 }
 
@@ -97,7 +97,8 @@ void AThirdPersonMPCharacter::StopFire()
 	bIsFireingWeapons = false;
 }
 
-void AThirdPersonMPCharacter::HandleFire()
+
+void AThirdPersonMPCharacter::HandleFire_Implementation()
 {
 	FVector SpawnLocation = GetActorLocation() + (GetActorRotation().Vector() * 100.0f) + (GetActorUpVector() * 50.0f);
 	FRotator SpawnRotation = GetActorRotation();
@@ -107,11 +108,6 @@ void AThirdPersonMPCharacter::HandleFire()
 	SpawnParameters.Owner = this;
 
 	AThirdPersonMPProjectile* SpawnedProjectile = GetWorld()->SpawnActor<AThirdPersonMPProjectile>(SpawnLocation, SpawnRotation, SpawnParameters);
-}
-
-void AThirdPersonMPCharacter::HandleFire_Implementation()
-{
-
 }
 
 void AThirdPersonMPCharacter::SetCurrentHealth(float HealthValue)

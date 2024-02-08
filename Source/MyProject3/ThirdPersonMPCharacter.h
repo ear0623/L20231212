@@ -56,7 +56,7 @@ protected:
 
 	UFUNCTION(Server,Reliable) 
 	void HandleFire(); 
-	void HandleFire_Implementation();
+	//void HandleFire_Implementation();
 
 	FTimerHandle FiringTimer;
 
